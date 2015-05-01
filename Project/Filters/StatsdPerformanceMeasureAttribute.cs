@@ -32,6 +32,8 @@ namespace OpenTable.Services.Statsd.Attributes.Filters
 		// regular expression to match verion number of Api, e.g.: @"availability/(\w+)/"
 		public string ApiVersionPattern { get; set; }
 
+		public string DefaultApiVersion { get; set; }
+
 		public override void OnActionExecuting(HttpActionContext actionContext)
 		{
 			try
@@ -121,12 +123,18 @@ namespace OpenTable.Services.Statsd.Attributes.Filters
 
 		private string GetApiVersion(HttpActionExecutedContext httpActionExecutedContext)
 		{
+			if (ApiVersionPattern == null)
+			{
+				return (DefaultApiVersion ?? "v0");
+			}
+
 			var path = httpActionExecutedContext.Request.RequestUri.AbsolutePath;
 			var match = Regex.Match(path, ApiVersionPattern, RegexOptions.IgnoreCase);
 
 			if (match.Success)
 				return match.Groups[1].Value;
-			return "v1";
+
+			return (DefaultApiVersion ?? "v0");
 		}
 
 		private string GetReferringService(HttpActionExecutedContext httpActionExecutedContext)
