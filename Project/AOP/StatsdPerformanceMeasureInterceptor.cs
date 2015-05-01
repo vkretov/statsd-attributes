@@ -43,7 +43,7 @@ namespace OpenTable.Services.Statsd.Attributes.AOP
 				StartTimer(invocation);
 				invocation.Proceed();
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				exceptionThrown = true;
 				throw;
