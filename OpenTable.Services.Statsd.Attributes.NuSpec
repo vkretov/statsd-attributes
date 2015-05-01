@@ -18,5 +18,6 @@
   </metadata>
   <files>
     <file src="Project\bin\release\OpenTable.Services.Statsd.Attributes.dll" target="lib\net40\OpenTable.Services.Statsd.Attributes.dll" />
-  </files>
+    <file src="Project\bin\release\OpenTable.Services.Statsd.Attributes.pdb" target="lib\net40\OpenTable.Services.Statsd.Attributes.pdb" />
+	</files>
 </package>
