@@ -1,4 +1,5 @@
-# statsd-attributes
-C# attributes for statsd performance measurement
-Lu Tahmazyan, Bill Stanton
+# statsd-attributes<br />
+C# attributes for statsd performance measurement<br />
+Lu Tahmazyan<br />
+Bill Stanton<br />
 
