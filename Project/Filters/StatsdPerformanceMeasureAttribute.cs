@@ -29,6 +29,9 @@ namespace OpenTable.Services.Statsd.Attributes.Filters
 			_stopwatchKey = "StatsdPerformanceMeasureAttribute_stopwatchKey";
 		}
 
+		// regular expression to match verion number of Api, e.g.: @"availability/(\w+)/"
+		public string ApiVersionPattern { get; set; }
+
 		public override void OnActionExecuting(HttpActionContext actionContext)
 		{
 			try
@@ -119,7 +122,7 @@ namespace OpenTable.Services.Statsd.Attributes.Filters
 		private string GetApiVersion(HttpActionExecutedContext httpActionExecutedContext)
 		{
 			var path = httpActionExecutedContext.Request.RequestUri.AbsolutePath;
-			var match = Regex.Match(path, @"availability/(\w+)/", RegexOptions.IgnoreCase);
+			var match = Regex.Match(path, ApiVersionPattern, RegexOptions.IgnoreCase);
 
 			if (match.Success)
 				return match.Groups[1].Value;
