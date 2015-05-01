@@ -11,10 +11,8 @@
     <copyright>Copyright OpenTable 2015</copyright>
     <dependencies>
       <dependency id="Castle.Core" version="3.2" />
-	  <dependency id="Microsoft.AspNet.WebApi.Client" version="4.0" />
 	  <dependency id="Microsoft.AspNet.WebApi.Core" version="4.0" />
 	  <dependency id="Microsoft.Net.Http" version="2.0" />
-	  <dependency id="Newtonsoft.Json" version="4.5" />
 	  <dependency id="StatsdClient" version="1.0" />
     </dependencies>
   </metadata>
