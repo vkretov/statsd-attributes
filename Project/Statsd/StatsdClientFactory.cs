@@ -9,10 +9,6 @@ namespace OpenTable.Services.Statsd.Attributes.Statsd
 {
 	public class StatsdClientFactory
 	{
-		public static TimeSpan? FailureBackoff { get; set; }
-
-		public static Action FailureCallback { get; set; }
-
 		public static void MakeStatsdClient(
 			string statsdServerName, 
 			int statsdServerPort, 
@@ -33,7 +29,7 @@ namespace OpenTable.Services.Statsd.Attributes.Statsd
 				() => { StatsdClientWrapper.IsEnabled = true; },
 
 				// default failure callback to no-op
-				FailureCallback ?? new Action(() => { }));
+				failureCallback ?? new Action(() => { }));
 		}
 
 
