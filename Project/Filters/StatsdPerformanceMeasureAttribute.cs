@@ -55,6 +55,11 @@ namespace OpenTable.Services.Statsd.Attributes.Filters
 		{
 			try
 			{
+				if (!StatsdClientWrapper.IsEnabled)
+				{
+					return;
+				}
+
 				if (HttpContext.Current == null || actionExecutedContext.Response == null) return;
 
 				var stopwatch = HttpContext.Current.Items[_stopwatchKey] as Stopwatch;
@@ -99,8 +104,8 @@ namespace OpenTable.Services.Statsd.Attributes.Filters
 					httpVerb,
 					statusCode).Replace('_', '-').ToLower();
 
-				Metrics.Timer(metricName, elapsedMilliseconds);
-				Metrics.Counter(metricName);
+				StatsdClientWrapper.Timer(metricName, elapsedMilliseconds);
+				StatsdClientWrapper.Counter(metricName);
 
 				EnrichResponseHeaders(actionExecutedContext);
 			}

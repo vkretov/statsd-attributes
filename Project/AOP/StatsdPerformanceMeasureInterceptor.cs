@@ -68,6 +68,11 @@ namespace OpenTable.Services.Statsd.Attributes.AOP
 
 		private void StopTimerAndReport(IInvocation invocation, bool exceptionThrown = false)
 		{
+			if (!StatsdClientWrapper.IsEnabled)
+			{
+				return;
+			}
+
 			var stopwatch = _stopWatchThreadLocal.Value[invocation.Method.MethodHandle];
 
 			var elapsedMilliseconds = (int)stopwatch.ElapsedMilliseconds;
