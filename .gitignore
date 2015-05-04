@@ -1,0 +1,28 @@
+[Bb]in/
+[Oo]bj/
+[Ll]ogs/
+._.*
+*.suo
+*.user
+*.sln.docstates
+*.config.transformed
+packages/*
+!packages/CodeAssassin.ConfigTransform.*
+!packages/repositories.config
+node_modules
+bower_components
+coverage/
+npm-debug.log
+
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.dotCover
+
+#SpecFlow reports
+AcceptanceTests/TestResult.html
+AcceptanceTests/TestResult.xml
+AcceptanceTests/TestResult.txt
+AcceptanceTests/files.generated
+
+#TestResults, from SpecFlow??? In combination with VS 2013???
+TestResults/*
