@@ -53,17 +53,68 @@ protected void Application_Start()
 Annotating controller method without specifing a custom name, in which case the method name, `Transactions`, will be used in publishing metrics.  Second parameter `ApiVersionPattern`, is used in specifing a regular expression for the purposes of determining the verson of the API.
 ```C#
 [HttpGet]
-[LogOutliers]
 [StatsdPerformanceMeasure(ApiVersionPattern = @"user/(\w+)/", DefaultApiVersion = "v1")]
 public HttpResponseMessage Transactions(){}
 ```
 
-Annotating a controller method with a custom name. 
+Annotating a controller method with a custom name `GlobalUser` instead of `Get`. 
 ```C#
 [StatsdPerformanceMeasure("GlobalUser", ApiVersionPattern = @"user/(\w+)/", DefaultApiVersion = "v1")]
-[LogOutliers("GlobalUser")]
 public HttpResponseMessage Get(){}
 ```
 
-###Method Annotation
+#####Published Metrics
+List of some of the published metrics:
+-  statsd.timers.userservice-na.dev.vm.vmmbpltahmazyan.http-request-in.curl-lustest.transactions-v2.success.get.200.mean_90
+-  statsd.timers.userservice-na.dev.vm.vmmbpltahmazyan.http-request-in.curl-lustest.transactions-v1.success.get.200.mean_90
 
+*For desciption of each of the metric key fileds, please see https://docs.google.com/document/d/1FtVW1j46BMo_T9oFYvXLqQru8E_wYxFaJFnc_JjW6R4/edit#heading=h.sc77bui2ektl*
+
+###Method Annotation
+First, we'll need to register an interceptor with Windsor Castel IoC container. 
+
+```C#
+namespace OT.Services.UserService.API.Utilities
+{
+	public class WindsorInstaller : IWindsorInstaller
+	{
+		public void Install(IWindsorContainer container, IConfigurationStore store)
+		{
+			container.Register(
+				Component
+					.For<StatsdPerformanceMeasureInterceptor>()
+					.ImplementedBy<StatsdPerformanceMeasureInterceptor>()
+					.LifestyleSingleton());
+		}
+	}
+}
+```
+
+Next, we'll annotate the class of interest and mark methods we want metrics for.
+```C#
+
+namespace OT.Services.UserService.DataAccess.ServicesAccess.RestaurantService
+{
+	//// 
+	//// (1) class level annotation, marking this class for interception 
+	//// 
+	[Interceptor(typeof(StatsdPerformanceMeasureInterceptor))]
+	public class RestaurantInfoProvider : IRestaurantInfoProvider
+	{
+
+		////
+		//// (2) marking method, now it will publish count and execution duration.
+		////
+		[StatsdMeasuredMethod]
+		public IEnumerable<Restaurant> GetRestaurantsInfo(List<int> restaurantIds, string language = null) {}
+
+	}
+}
+```
+
+#####Published Metrics
+List of some of the published metrics:
+-  statsd.timers.userservice-na.dev.vm.vmmbpltahmazyan.method-call.curl-lustest.getrestaurantsbylanguage.success.undefined.undefined.mean_90
+-  statsd.timers.userservice-na.dev.vm.vmmbpltahmazyan.method-call.curl-lustest.getrestaurantsinfo.success.undefined.undefined.mean_90
+
+*For desciption of each of the metric key fileds, please see https://docs.google.com/document/d/1FtVW1j46BMo_T9oFYvXLqQru8E_wYxFaJFnc_JjW6R4/edit#heading=h.sc77bui2ektl*
