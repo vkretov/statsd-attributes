@@ -69,6 +69,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AOP\StatsdMeasuredMethodAttribute.cs" />
     <Compile Include="AOP\StatsdPerformanceMeasureInterceptor.cs" />
     <Compile Include="Common\CommonHelpers.cs" />
     <Compile Include="Filters\StatsdPerformanceMeasureAttribute.cs" />
