@@ -46,11 +46,11 @@ protected void Application_Start()
 					() => _logger.LogError("statsd initialization failed"));
 }
 ```
-*It is important that the service type follows this format, `appname-region`*  In the above example appname is **availability** and region is **na**.  Failure backoff is the time in seconds to wait between StatsD client initialization in case of a failure.  Failure callback is just that, a facility to pass in an action to be executed up on Statsd client initialization, in our case we just log it.
+*It is important that the service type follows this format, `appname-region`*  In the above example appname is **availability** and region is **na**.  Failure back off is the time in seconds to wait between StatsD client initialization in case of a failure.  Failure callback is just that, a facility to pass in an action to be executed up on Statsd client initialization, in our case we just log it.
 
 
 ###Controller Annotation
-Annotating controller method without specifing a custom name, in which case the method name, `Transactions`, will be used in publishing metrics.  Second parameter `ApiVersionPattern`, is used in specifing a regular expression for the purposes of determining the verson of the API.
+Annotating controller method without specifying a custom name, in which case the method name, `Transactions`, will be used in publishing metrics.  Second parameter `ApiVersionPattern`, is used in specifying a regular expression for the purposes of determining the version of the API.
 ```C#
 [HttpGet]
 [StatsdPerformanceMeasure(ApiVersionPattern = @"user/(\w+)/", DefaultApiVersion = "v1")]
@@ -68,10 +68,10 @@ List of some of the published metrics:
 -  statsd.timers.userservice-na.dev.vm.vmmbpltahmazyan.http-request-in.curl-lustest.transactions-v2.success.get.200.mean_90
 -  statsd.timers.userservice-na.dev.vm.vmmbpltahmazyan.http-request-in.curl-lustest.transactions-v1.success.get.200.mean_90
 
-*For desciption of each of the metric key fileds, please see https://docs.google.com/document/d/1FtVW1j46BMo_T9oFYvXLqQru8E_wYxFaJFnc_JjW6R4/edit#heading=h.sc77bui2ektl*
+*For description of each of the metric key fields, please see https://docs.google.com/document/d/1FtVW1j46BMo_T9oFYvXLqQru8E_wYxFaJFnc_JjW6R4/edit#heading=h.sc77bui2ektl*
 
 ###Method Annotation
-First, we'll need to register an interceptor with Windsor Castel IoC container. 
+First, we'll need to register an interceptor with Castle Windsor IoC container. 
 
 ```C#
 namespace OT.Services.UserService.API.Utilities
@@ -117,4 +117,5 @@ List of some of the published metrics:
 -  statsd.timers.userservice-na.dev.vm.vmmbpltahmazyan.method-call.curl-lustest.getrestaurantsbylanguage.success.undefined.undefined.mean_90
 -  statsd.timers.userservice-na.dev.vm.vmmbpltahmazyan.method-call.curl-lustest.getrestaurantsinfo.success.undefined.undefined.mean_90
 
-*For desciption of each of the metric key fileds, please see https://docs.google.com/document/d/1FtVW1j46BMo_T9oFYvXLqQru8E_wYxFaJFnc_JjW6R4/edit#heading=h.sc77bui2ektl*
+*For description of each of the metric key fields, please see https://docs.google.com/document/d/1FtVW1j46BMo_T9oFYvXLqQru8E_wYxFaJFnc_JjW6R4/edit#heading=h.sc77bui2ektl*
+
