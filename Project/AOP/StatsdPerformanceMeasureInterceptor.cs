@@ -122,7 +122,7 @@ namespace OpenTable.Services.Statsd.Attributes.AOP
 					return true;
 				}
 
-				if (invocation.Method.GetCustomAttributes(typeof (StatsdMeasuredMethodAttribute), false).Any())
+				if (invocation.MethodInvocationTarget.GetCustomAttributes(typeof (StatsdMeasuredMethodAttribute), false).Any())
 				{
 					_scanned[invocation.Method.MethodHandle] = true;
 					return true;
@@ -143,9 +143,8 @@ namespace OpenTable.Services.Statsd.Attributes.AOP
 			}
 
 			// if we have any methods which are explicitly marked as statsd measured methods, return false
-			var type = invocation.Method.DeclaringType;
-			if (type != null
-				&& type.GetMethods(BindingFlags.NonPublic | BindingFlags.DeclaredOnly)
+			var type = invocation.InvocationTarget.GetType();
+			if (type.GetMethods(BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.DeclaredOnly)
 						.Any(m => m.GetCustomAttributes(typeof (StatsdMeasuredMethodAttribute), false).Any()))
 			{
 				return false;
