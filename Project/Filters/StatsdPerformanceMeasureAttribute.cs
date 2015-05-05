@@ -14,26 +14,17 @@ namespace OpenTable.Services.Statsd.Attributes.Filters
 	[AttributeUsage(AttributeTargets.Method, Inherited = true)]
 	public class StatsdPerformanceMeasureAttribute : ActionFilterAttribute
 	{
-		private readonly string _suppliedActionName;
-
-		private readonly string _stopwatchKey;
+		private readonly string _stopwatchKey = "StatsdPerformanceMeasureAttribute_stopwatchKey";
 
 		private readonly int _maxUserAgentLength = 60;
-
-		// Had to add this "work around" of casting null to string to get team city to build.
-		// http://blog.lukebennett.com/2013/06/18/c-compiler-error-cs0182-when-building-via-teamcity/
-		public StatsdPerformanceMeasureAttribute(string suppliedActionName = (string) null)
-		{
-			_suppliedActionName = suppliedActionName;
-
-			_stopwatchKey = "StatsdPerformanceMeasureAttribute_stopwatchKey";
-		}
 
 		// regular expression to match verion number of Api, e.g.: @"availability/(\w+)/"
 		public string ApiVersionPattern { get; set; }
 
 		public string DefaultApiVersion { get; set; }
 
+		public string SuppliedActionName { get; set; }
+		
 		public override void OnActionExecuting(HttpActionContext actionContext)
 		{
 			try
