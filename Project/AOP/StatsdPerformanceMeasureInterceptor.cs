@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
@@ -19,6 +20,9 @@ namespace OpenTable.Services.Statsd.Attributes.AOP
 		// to specify which method to intercept.  In order to do this check once,
 		// results are cached in a dictionary.
 		public List<string> RegexSelector { get; set; }
+
+		// memoized result of InterceptAllMethods, run once on first call to intercept
+		private bool? _interceptAllMethods = null;
 
 		private readonly ConcurrentDictionary<RuntimeMethodHandle, bool> _scanned =
 			new ConcurrentDictionary<RuntimeMethodHandle, bool>();
@@ -99,14 +103,26 @@ namespace OpenTable.Services.Statsd.Attributes.AOP
 
 		private bool CanIntercept(IInvocation invocation)
 		{
-			if (RegexSelector == null || RegexSelector.Count == 0)
+			if (_interceptAllMethods == null)
+			{
+				_interceptAllMethods = InterceptAllMethods(invocation);
+			}
+
+			if (_interceptAllMethods.Value)
 			{
 				return true;
 			}
 
 			if (!_scanned.ContainsKey(invocation.Method.MethodHandle))
 			{
-				if (RegexSelector.Any(regex => Regex.IsMatch(invocation.Method.Name, regex)))
+				if (RegexSelector != null 
+					&& RegexSelector.Any(regex => Regex.IsMatch(invocation.Method.Name, regex)))
+				{
+					_scanned[invocation.Method.MethodHandle] = true;
+					return true;
+				}
+
+				if (invocation.MethodInvocationTarget.GetCustomAttributes(typeof (StatsdMeasuredMethodAttribute), false).Any())
 				{
 					_scanned[invocation.Method.MethodHandle] = true;
 					return true;
@@ -116,6 +132,26 @@ namespace OpenTable.Services.Statsd.Attributes.AOP
 			}
 
 			return _scanned[invocation.Method.MethodHandle];
+		}
+
+		private bool InterceptAllMethods(IInvocation invocation)
+		{
+			// if we have a non-empty regex selector, return false
+			if (RegexSelector != null && RegexSelector.Any())
+			{
+				return false;
+			}
+
+			// if we have any methods which are explicitly marked as statsd measured methods, return false
+			var type = invocation.InvocationTarget.GetType();
+			if (type.GetMethods(BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.DeclaredOnly)
+						.Any(m => m.GetCustomAttributes(typeof (StatsdMeasuredMethodAttribute), false).Any()))
+			{
+				return false;
+			}
+
+			// otherwise true
+			return true;
 		}
 	}
 }
