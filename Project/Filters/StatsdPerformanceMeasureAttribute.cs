@@ -60,9 +60,9 @@ namespace OpenTable.Services.Statsd.Attributes.Filters
 				var elapsedMilliseconds = (int)stopwatch.ElapsedMilliseconds;
 				stopwatch.Reset();
 
-				var actionName = string.IsNullOrEmpty(_suppliedActionName)
+				var actionName = string.IsNullOrEmpty(SuppliedActionName)
 									? actionExecutedContext.ActionContext.ActionDescriptor.ActionName
-									: _suppliedActionName;
+									: SuppliedActionName;
 
 				var apiVersion = GetApiVersion(actionExecutedContext);
 
