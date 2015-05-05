@@ -22,6 +22,8 @@
 
 		public static readonly string OtEndpoint = "ot-endpoint";
 
+		public static readonly string Undefined = "undefined";
+
 		public enum HighlevelStatus
 		{
 			Success,

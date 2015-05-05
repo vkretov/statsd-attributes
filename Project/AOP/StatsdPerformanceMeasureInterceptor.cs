@@ -6,8 +6,10 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Web;
 using Castle.DynamicProxy;
 using OpenTable.Services.Statsd.Attributes.Statsd;
+using OpenTable.Services.Statsd.Attributes.Common;
 
 namespace OpenTable.Services.Statsd.Attributes.AOP
 {
@@ -85,13 +87,15 @@ namespace OpenTable.Services.Statsd.Attributes.AOP
 			var actionName = invocation.Method.Name.ToLower();
 
 			var metricName = string.Format(
-				"{0}.{1}.{2}.{3}",
+				"{0}.{1}.{2}.{3}.{4}.{5}",
 				StatsdConstants.MethodCall,
-				StatsdConstants.OtSrviceNameValue,
+				CommonHelpers.GetReferringServiceFromHttpContext(),
 				actionName,
 				exceptionThrown
 					? "failure"
-					: "success").ToLower();
+					: "success",
+				StatsdConstants.Undefined,
+				StatsdConstants.Undefined).ToLower();
 
 			StatsdClient.Metrics.Timer(metricName, elapsedMilliseconds);
 			StatsdClient.Metrics.Counter(metricName);
