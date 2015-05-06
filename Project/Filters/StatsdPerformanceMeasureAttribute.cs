@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Web;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
 using OpenTable.Services.Statsd.Attributes.Statsd;
-using StatsdClient;
 using Stopwatch = System.Diagnostics.Stopwatch;
 
 namespace OpenTable.Services.Statsd.Attributes.Filters
@@ -14,11 +12,11 @@ namespace OpenTable.Services.Statsd.Attributes.Filters
 	[AttributeUsage(AttributeTargets.Method, Inherited = true)]
 	public class StatsdPerformanceMeasureAttribute : ActionFilterAttribute
 	{
-		private readonly string _stopwatchKey = "StatsdPerformanceMeasureAttribute_stopwatchKey";
+	    private const string StopwatchKey = "StatsdPerformanceMeasureAttribute_stopwatchKey";
 
-		private readonly int _maxUserAgentLength = 60;
+	    private const int MaxUserAgentLength = 60;
 
-		// regular expression to match verion number of Api, e.g.: @"availability/(\w+)/"
+	    // regular expression to match verion number of Api, e.g.: @"availability/(\w+)/"
 		public string ApiVersionPattern { get; set; }
 
 		public string DefaultApiVersion { get; set; }
@@ -29,11 +27,8 @@ namespace OpenTable.Services.Statsd.Attributes.Filters
 		{
 			try
 			{
-				if (HttpContext.Current == null)
-					return;
-
 				var stopwatch = new Stopwatch();
-				HttpContext.Current.Items[_stopwatchKey] = stopwatch;
+			    actionContext.Request.Properties[StopwatchKey] = stopwatch;
 				stopwatch.Start();
 			}
 			finally
@@ -51,9 +46,7 @@ namespace OpenTable.Services.Statsd.Attributes.Filters
 					return;
 				}
 
-				if (HttpContext.Current == null || actionExecutedContext.Response == null) return;
-
-				var stopwatch = HttpContext.Current.Items[_stopwatchKey] as Stopwatch;
+                var stopwatch = actionExecutedContext.Request.Properties[StopwatchKey] as Stopwatch;
 
 				if (stopwatch == null) return;
 
@@ -106,7 +99,7 @@ namespace OpenTable.Services.Statsd.Attributes.Filters
 			}
 		}
 
-		private void EnrichResponseHeaders(HttpActionExecutedContext actionExecutedContext)
+		private static void EnrichResponseHeaders(HttpActionExecutedContext actionExecutedContext)
 		{
 			if (!actionExecutedContext.Response.Headers.Contains(StatsdConstants.OtSrviceName) &&
 				!string.IsNullOrEmpty(StatsdConstants.OtSrviceNameValue))
@@ -133,7 +126,7 @@ namespace OpenTable.Services.Statsd.Attributes.Filters
 			return (DefaultApiVersion ?? "v0");
 		}
 
-		private string GetReferringService(HttpActionExecutedContext httpActionExecutedContext)
+		private static string GetReferringService(HttpActionExecutedContext httpActionExecutedContext)
 		{
 			// fetch referring service from request headers 
 			IEnumerable<string> headerValues;
@@ -155,7 +148,7 @@ namespace OpenTable.Services.Statsd.Attributes.Filters
 			var userAgent = (match.Success) ? match.Groups[1].Value.Replace('.', '_') : null;
 
 			if (!string.IsNullOrEmpty(userAgent))
-				userAgent = new string(userAgent.Take(_maxUserAgentLength).ToArray());
+				userAgent = new string(userAgent.Take(MaxUserAgentLength).ToArray());
 
 			return otReferringservice ?? (userAgent ?? "undefined");
 		}
