@@ -23,3 +23,7 @@ AcceptanceTests/files.generated
 
 #TestResults, from SpecFlow??? In combination with VS 2013???
 TestResults/*
+
+# packages keep only what's needed.
+packages/*
+!packages/repositories.config
