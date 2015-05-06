@@ -6,9 +6,6 @@
 *.user
 *.sln.docstates
 *.config.transformed
-packages/*
-!packages/CodeAssassin.ConfigTransform.*
-!packages/repositories.config
 node_modules
 bower_components
 coverage/
