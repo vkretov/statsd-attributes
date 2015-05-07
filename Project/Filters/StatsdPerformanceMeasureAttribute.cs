@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
+using OpenTable.Services.Statsd.Attributes.Common;
 using OpenTable.Services.Statsd.Attributes.Statsd;
 using Stopwatch = System.Diagnostics.Stopwatch;
 
@@ -30,6 +31,7 @@ namespace OpenTable.Services.Statsd.Attributes.Filters
 				var stopwatch = new Stopwatch();
 			    actionContext.Request.Properties[StopwatchKey] = stopwatch;
 				stopwatch.Start();
+				CommonHelpers.Headers = actionContext.Request.Headers;
 			}
 			finally
 			{
@@ -128,29 +130,7 @@ namespace OpenTable.Services.Statsd.Attributes.Filters
 
 		private static string GetReferringService(HttpActionExecutedContext httpActionExecutedContext)
 		{
-			// fetch referring service from request headers 
-			IEnumerable<string> headerValues;
-			string otReferringservice = null;
-			if (httpActionExecutedContext.Request.Headers.TryGetValues(StatsdConstants.OtReferringservice, out headerValues))
-			{
-				otReferringservice = headerValues.FirstOrDefault();
-
-				if (!string.IsNullOrEmpty(otReferringservice))
-					otReferringservice = otReferringservice.Replace('.', '_');
-			}
-
-			// fetch user agent from request headers
-			var match = Regex.Match(
-				httpActionExecutedContext.Request.Headers.UserAgent.ToString(),
-				@"^(\w+)/",
-				RegexOptions.IgnoreCase);
-
-			var userAgent = (match.Success) ? match.Groups[1].Value.Replace('.', '_') : null;
-
-			if (!string.IsNullOrEmpty(userAgent))
-				userAgent = new string(userAgent.Take(MaxUserAgentLength).ToArray());
-
-			return otReferringservice ?? (userAgent ?? "undefined");
+			return CommonHelpers.GetReferringService(httpActionExecutedContext.Request.Headers);
 		}
 	}
 }

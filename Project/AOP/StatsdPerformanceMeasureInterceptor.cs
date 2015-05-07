@@ -89,7 +89,7 @@ namespace OpenTable.Services.Statsd.Attributes.AOP
 			var metricName = string.Format(
 				"{0}.{1}.{2}.{3}.{4}.{5}",
 				StatsdConstants.MethodCall,
-				CommonHelpers.GetReferringServiceFromHttpContext(),
+				CommonHelpers.GetReferringService(),
 				actionName,
 				exceptionThrown
 					? "failure"
