@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using OpenTable.Services.Statsd.Attributes.Common;
 
 namespace OpenTable.Services.Statsd.Attributes.Statsd
 {
@@ -16,7 +17,7 @@ namespace OpenTable.Services.Statsd.Attributes.Statsd
 				return;
 			}
 
-			StatsdClient.Metrics.Counter(statName, value, sampleRate);
+			StatsdClient.Metrics.Counter(CommonHelpers.Sanitize(statName), value, sampleRate);
 		}
 
 		public static void Timer(string statName, int value, double sampleRate = 1)
@@ -26,7 +27,7 @@ namespace OpenTable.Services.Statsd.Attributes.Statsd
 				return;
 			}
 
-			StatsdClient.Metrics.Timer(statName, value, sampleRate);
+			StatsdClient.Metrics.Timer(CommonHelpers.Sanitize(statName), value, sampleRate);
 		}
 	}
 }

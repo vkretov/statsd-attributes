@@ -52,6 +52,8 @@ namespace OpenTable.Services.Statsd.Attributes.Statsd
 				appServingRegion,
 				Environment.MachineName).Replace('_', '-').ToLower();
 
+			prefix = CommonHelpers.Sanitize(prefix);
+
 			var metricsConfig = new MetricsConfig
 			{
 				StatsdServerName = statsdServerName,

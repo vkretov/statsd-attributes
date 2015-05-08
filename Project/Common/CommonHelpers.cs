@@ -89,5 +89,18 @@ namespace OpenTable.Services.Statsd.Attributes.Common
 
 			return userAgent ?? "undefined";
 		}
+
+		public static string Sanitize(string input)
+		{
+			const string WhitespaceRegex = @"\s+";
+			const string ForwardSlashRegex = @"/";
+			const string UncleanCharacterRegex = @"[^a-zA-Z_\-0-9\.]";
+
+			var sanitized = input;
+			sanitized = Regex.Replace(sanitized, WhitespaceRegex, "_");
+			sanitized = Regex.Replace(sanitized, ForwardSlashRegex, "-");
+			sanitized = Regex.Replace(sanitized, UncleanCharacterRegex, "");
+			return sanitized;
+		}
 	}
 }
