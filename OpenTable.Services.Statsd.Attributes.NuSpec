@@ -1,23 +1,37 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
-  <metadata>
-    <version>2.00</version>
-    <authors>OpenTable</authors>
-    <owners>OpenTable</owners>
-    <id>OpenTable.Services.Statsd.Attributes</id>
-    <title>OpenTable.Services.Statsd.Attributes</title>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Attributes for method timing with metrics pushed to statsd</description>
-    <copyright>Copyright OpenTable 2015</copyright>
-    <dependencies>
-      <dependency id="Castle.Core" version="3.2" />
-	  <dependency id="Microsoft.AspNet.WebApi.Core" version="4.0" />
-	  <dependency id="Microsoft.Net.Http" version="2.0" />
-	  <dependency id="StatsdClient" version="1.0" />
-    </dependencies>
-  </metadata>
-  <files>
-    <file src="Project\bin\release\OpenTable.Services.Statsd.Attributes.dll" target="lib\net40\OpenTable.Services.Statsd.Attributes.dll" />
-    <file src="Project\bin\release\OpenTable.Services.Statsd.Attributes.pdb" target="lib\net40\OpenTable.Services.Statsd.Attributes.pdb" />
-	</files>
+    <metadata>
+        <version>2.00</version>
+        <authors>OpenTable</authors>
+        <owners>OpenTable</owners>
+        <id>OpenTable.Services.Statsd.Attributes</id>
+        <title>OpenTable.Services.Statsd.Attributes</title>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Attributes for method timing with metrics pushed to statsd</description>
+        <copyright>Copyright OpenTable 2015</copyright>
+        <dependencies>
+            <group>
+                <dependency id="Castle.Core" version="3.2" />
+                <dependency id="StatsdClient" version="1.0" />
+            </group>
+
+            <group targetFramework="net40">
+                <dependency id="Microsoft.AspNet.WebApi.Core" version="4.0" />
+                <dependency id="Microsoft.Net.Http" version="2.0" />
+                <dependency id="Newtonsoft.Json" version="4.5" />
+            </group>
+
+            <group targetFramework="net45">
+                <dependency id="Microsoft.AspNet.WebApi.Core" version="5.2" />
+                <dependency id="Newtonsoft.Json" version="6.0" />
+            </group>
+
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="Project\bin\release\OpenTable.Services.Statsd.Attributes.dll" target="lib\net40\OpenTable.Services.Statsd.Attributes.dll" />
+        <file src="Project\bin\release\OpenTable.Services.Statsd.Attributes.pdb" target="lib\net40\OpenTable.Services.Statsd.Attributes.pdb" />
+        <file src="Project-Net45\bin\release\OpenTable.Services.Statsd.Attributes.dll" target="lib\net45\OpenTable.Services.Statsd.Attributes.dll" />
+        <file src="Project-Net45\bin\release\OpenTable.Services.Statsd.Attributes.pdb" target="lib\net45\OpenTable.Services.Statsd.Attributes.pdb" />
+    </files>
 </package>
