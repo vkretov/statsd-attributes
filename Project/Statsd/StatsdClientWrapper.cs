@@ -6,7 +6,7 @@ using OpenTable.Services.Statsd.Attributes.Common;
 
 namespace OpenTable.Services.Statsd.Attributes.Statsd
 {
-	public class StatsdClientWrapper
+	internal class StatsdClientWrapper
 	{
 		public static bool IsEnabled { get; set; }
 
