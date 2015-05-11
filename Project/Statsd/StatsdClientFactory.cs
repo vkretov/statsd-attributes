@@ -13,6 +13,7 @@ namespace OpenTable.Services.Statsd.Attributes.Statsd
 			string statsdServerName, 
 			int statsdServerPort, 
 			string appEnvironment, 
+			string dataCenterRegion,
 			string serviceType,
 			int failureBackoffSecs = 60, 
 			Action failureCallback = null)
@@ -20,7 +21,7 @@ namespace OpenTable.Services.Statsd.Attributes.Statsd
 			CommonHelpers.TrySleepRetry(
 
 				// action
-				() => ConfigureStatsd(statsdServerName, statsdServerPort, appEnvironment, serviceType),
+				() => ConfigureStatsd(statsdServerName, statsdServerPort, appEnvironment, dataCenterRegion, serviceType),
 
 				// backoff between attempts
 				TimeSpan.FromSeconds(failureBackoffSecs),
@@ -33,23 +34,22 @@ namespace OpenTable.Services.Statsd.Attributes.Statsd
 		}
 
 
-		private static void ConfigureStatsd(string statsdServerName, int statsdServerPort, string appEnvironment, string serviceType)
+		private static void ConfigureStatsd(string statsdServerName, int statsdServerPort, string appEnvironment, string dataCenterRegion, string serviceType)
 		{
 			// Save these values for later use in StatsD filter
 			StatsdConstants.OtSrviceNameValue = serviceType.ToLower();
 			StatsdConstants.OtSrviceEnvirnomentValue = appEnvironment.ToLower();
 
-			// Will be using the frist two characters of the machine name as application serving region.
-			// In case machine name is not set will default to xx
-			var appServingRegion = "xx";
-			if (Environment.MachineName.Length >= 2)
-				appServingRegion = Environment.MachineName.Substring(0, 2).ToLower();
+			if (string.IsNullOrEmpty(dataCenterRegion))
+			{
+				dataCenterRegion = (Environment.MachineName.Length >= 2 ? Environment.MachineName.Substring(0, 2).ToLower() : "xx");
+			}
 
 			var prefix = string.Format(
 				"{0}.{1}.{2}.{3}",
 				serviceType,
 				appEnvironment,
-				appServingRegion,
+				dataCenterRegion,
 				Environment.MachineName).Replace('_', '-').ToLower();
 
 			prefix = CommonHelpers.Sanitize(prefix);
