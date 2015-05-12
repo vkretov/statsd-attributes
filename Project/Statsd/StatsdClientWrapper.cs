@@ -21,8 +21,12 @@ namespace OpenTable.Services.Statsd.Attributes.Statsd
             {
                 Console.WriteLine("FakeStatsdClient - Counter Metric Published [name: {0}, value: {1}, sampleRate: {2}]", statName, value, sampleRate);
             }
+            else
+            {
+                StatsdClient.Metrics.Counter(statName, value, sampleRate);
+            }
 
-            StatsdClient.Metrics.Counter(statName, value, sampleRate);
+
         }
 
         public static void Timer(string statName, int value, double sampleRate = 1)
@@ -37,8 +41,10 @@ namespace OpenTable.Services.Statsd.Attributes.Statsd
             {
                 Console.WriteLine("FakeStatsdClient - Timer Metric Published [name: {0}, value: {1}, sampleRate: {2}]", statName, value, sampleRate);
             }
-
-            StatsdClient.Metrics.Timer(CommonHelpers.Sanitize(statName), value, sampleRate);
+            else
+            {
+                StatsdClient.Metrics.Timer(CommonHelpers.Sanitize(statName), value, sampleRate);
+            }
         }
     }
 }
