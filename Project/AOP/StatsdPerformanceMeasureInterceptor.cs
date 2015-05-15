@@ -86,19 +86,10 @@ namespace OpenTable.Services.Statsd.Attributes.AOP
 
 			var actionName = invocation.Method.Name.ToLower();
 
-			var metricName = string.Format(
-				"{0}.{1}.{2}.{3}.{4}.{5}",
-				StatsdConstants.MethodCall,
-				CommonHelpers.GetReferringService(),
-				actionName,
-				exceptionThrown
-					? "failure"
-					: "success",
-				StatsdConstants.Undefined,
-				StatsdConstants.Undefined).ToLower();
+			var metricName = CommonHelpers.MetricName(exceptionThrown, actionName);
 
-			StatsdClient.Metrics.Timer(metricName, elapsedMilliseconds);
-			StatsdClient.Metrics.Counter(metricName);
+			StatsdClientWrapper.Timer(metricName, elapsedMilliseconds);
+			StatsdClientWrapper.Counter(metricName);
 		}
 
 		private bool CanIntercept(IInvocation invocation)

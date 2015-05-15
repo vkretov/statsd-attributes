@@ -71,6 +71,7 @@
     <Compile Include="AOP\StatsdMeasuredMethodAttribute.cs" />
     <Compile Include="AOP\StatsdPerformanceMeasureInterceptor.cs" />
     <Compile Include="Common\CommonHelpers.cs" />
+    <Compile Include="Filters\StatsdPerformanceMeasure.cs" />
     <Compile Include="Filters\StatsdPerformanceMeasureAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Statsd\StatsdClientWrapper.cs" />
