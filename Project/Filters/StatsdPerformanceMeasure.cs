@@ -20,6 +20,7 @@ namespace OpenTable.Services.Statsd.Attributes.Filters
 		}
 
 		public string ActionName { get; private set; }
+		public bool ExceptionThrown { get; set; }
 
 		public void Dispose()
 		{
@@ -36,9 +37,9 @@ namespace OpenTable.Services.Statsd.Attributes.Filters
 			// (Marshal.GetExceptionPointers() != IntPtr.Zero || Marshal.GetExceptionCode() != 0);
 			// however, this is not yet implemented in Mono
 			// http://www.go-mono.com/momareports/apis/System.Int32%20System.Runtime.InteropServices.Marshal;;GetExceptionCode%28%29
-			// so: pass exceptionThrown = false;
+			// so: caller can manage this property manually in a try-catch nested witin the attribute, if desired
 			//=======================================
-			var metricName = CommonHelpers.MetricName(false, ActionName);
+			var metricName = CommonHelpers.MetricName(ExceptionThrown, ActionName);
 			StatsdClientWrapper.Timer(metricName, (int) _stopwatch.ElapsedMilliseconds);
 			StatsdClientWrapper.Counter(metricName);
 		}

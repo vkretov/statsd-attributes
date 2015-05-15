@@ -127,6 +127,30 @@ namespace OT.Services.UserService.DataAccess.ServicesAccess.RestaurantService
 }
 ```
 
+If exception tracking is needed for the metric, StatsdPerformanceMeasure exposes the boolean ExceptionThrown property, which defaults to false.  An example follows.
+```C#
+
+namespace OT.Services.UserService.DataAccess.ServicesAccess.RestaurantService
+{
+	public class RestaurantInfoProvider : IRestaurantInfoProvider
+	{
+		public void SomeMethod() {
+			using (var m = new StatsdPerformanceMeasure("TestMetric"))
+			{
+				try {
+					// some code
+
+				}
+				catch (Exception)
+				{
+					m.ExceptionThrown = true;
+				}
+			}
+		}
+	}
+}
+```
+
 #####Published Metrics
 List of some of the published metrics:
 -  statsd.timers.userservice-na.dev.vm.vmmbpltahmazyan.method-call.curl-lustest.getrestaurantsbylanguage.success.undefined.undefined.mean_90
