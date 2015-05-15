@@ -27,12 +27,18 @@ namespace OpenTable.Services.Statsd.Attributes.Filters
 			{
 				return;
 			}
+
 			_stopwatch.Stop();
 
+			//=======================================
+			// .NET has a technique to detect whether an exception has been thrown from within a finally:
 			// http://stackoverflow.com/questions/2830073/detecting-a-dispose-from-an-exception-inside-using-block
-			bool isInException = (Marshal.GetExceptionPointers() != IntPtr.Zero || Marshal.GetExceptionCode() != 0);
-
-			var metricName = CommonHelpers.MetricName(isInException, ActionName);
+			// (Marshal.GetExceptionPointers() != IntPtr.Zero || Marshal.GetExceptionCode() != 0);
+			// however, this is not yet implemented in Mono
+			// http://www.go-mono.com/momareports/apis/System.Int32%20System.Runtime.InteropServices.Marshal;;GetExceptionCode%28%29
+			// so: pass exceptionThrown = false;
+			//=======================================
+			var metricName = CommonHelpers.MetricName(false, ActionName);
 			StatsdClientWrapper.Timer(metricName, (int) _stopwatch.ElapsedMilliseconds);
 			StatsdClientWrapper.Counter(metricName);
 		}
