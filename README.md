@@ -107,7 +107,9 @@ namespace OT.Services.UserService.DataAccess.ServicesAccess.RestaurantService
 }
 ```
 
-We can also publish metrics for a specific block of code.
+###Publishing Metrics Without Annotation
+We can publish metrics for a specific block of code by enclosing the block within a using block which creates a StatsdPerformanceMeasure.  
+This does not require annotations on either the class or the method.
 ```C#
 
 namespace OT.Services.UserService.DataAccess.ServicesAccess.RestaurantService
