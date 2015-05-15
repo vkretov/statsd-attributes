@@ -107,6 +107,24 @@ namespace OT.Services.UserService.DataAccess.ServicesAccess.RestaurantService
 }
 ```
 
+We can also publish metrics for a specific block of code.
+```C#
+
+namespace OT.Services.UserService.DataAccess.ServicesAccess.RestaurantService
+{
+	public class RestaurantInfoProvider : IRestaurantInfoProvider
+	{
+		public void SomeMethod() {
+			using (var m = new StatsdPerformanceMeasure("TestMetric"))
+			{
+				// any code that we want to time and count invocations for
+				// <arbitrary code>
+			}
+		}
+	}
+}
+```
+
 #####Published Metrics
 List of some of the published metrics:
 -  statsd.timers.userservice-na.dev.vm.vmmbpltahmazyan.method-call.curl-lustest.getrestaurantsbylanguage.success.undefined.undefined.mean_90
