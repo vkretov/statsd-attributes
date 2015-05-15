@@ -102,5 +102,20 @@ namespace OpenTable.Services.Statsd.Attributes.Common
 			sanitized = Regex.Replace(sanitized, UncleanCharacterRegex, "");
 			return sanitized;
 		}
+
+		public static string MetricName(bool exceptionThrown, string actionName)
+		{
+			var metricName = string.Format(
+				"{0}.{1}.{2}.{3}.{4}.{5}",
+				StatsdConstants.MethodCall,
+				CommonHelpers.GetReferringService(),
+				actionName,
+				exceptionThrown
+					? "failure"
+					: "success",
+				StatsdConstants.Undefined,
+				StatsdConstants.Undefined).ToLower();
+			return metricName;
+		}
 	}
 }
