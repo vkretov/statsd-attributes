@@ -107,6 +107,50 @@ namespace OT.Services.UserService.DataAccess.ServicesAccess.RestaurantService
 }
 ```
 
+###Publishing Metrics Without Annotation
+We can publish metrics for a specific block of code by enclosing the block within a using block which creates a StatsdPerformanceMeasure.  This does not require annotations on either the class or the method.
+```C#
+
+namespace OT.Services.UserService.DataAccess.ServicesAccess.RestaurantService
+{
+	public class RestaurantInfoProvider : IRestaurantInfoProvider
+	{
+		public void SomeMethod() {
+			using (var m = new StatsdPerformanceMeasure("TestMetric"))
+			{
+				// marking arbitrary code fragment, now it will publish count and execution duration.
+				// <arbitrary code>
+				// 
+			}
+		}
+	}
+}
+```
+
+If exception tracking is needed for the metric, StatsdPerformanceMeasure exposes the boolean ExceptionThrown property, which defaults to false.  An example follows.
+```C#
+
+namespace OT.Services.UserService.DataAccess.ServicesAccess.RestaurantService
+{
+	public class RestaurantInfoProvider : IRestaurantInfoProvider
+	{
+		public void SomeMethod() {
+			using (var m = new StatsdPerformanceMeasure("TestMetric"))
+			{
+				try {
+					// some code
+
+				}
+				catch (Exception)
+				{
+					m.ExceptionThrown = true;
+				}
+			}
+		}
+	}
+}
+```
+
 #####Published Metrics
 List of some of the published metrics:
 -  statsd.timers.userservice-na.dev.vm.vmmbpltahmazyan.method-call.curl-lustest.getrestaurantsbylanguage.success.undefined.undefined.mean_90
