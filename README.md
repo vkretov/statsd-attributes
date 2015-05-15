@@ -108,8 +108,7 @@ namespace OT.Services.UserService.DataAccess.ServicesAccess.RestaurantService
 ```
 
 ###Publishing Metrics Without Annotation
-We can publish metrics for a specific block of code by enclosing the block within a using block which creates a StatsdPerformanceMeasure.  
-This does not require annotations on either the class or the method.
+We can publish metrics for a specific block of code by enclosing the block within a using block which creates a StatsdPerformanceMeasure.  This does not require annotations on either the class or the method.
 ```C#
 
 namespace OT.Services.UserService.DataAccess.ServicesAccess.RestaurantService
@@ -119,8 +118,9 @@ namespace OT.Services.UserService.DataAccess.ServicesAccess.RestaurantService
 		public void SomeMethod() {
 			using (var m = new StatsdPerformanceMeasure("TestMetric"))
 			{
-				// any code that we want to time and count invocations for
+				// marking arbitrary code fragment, now it will publish count and execution duration.
 				// <arbitrary code>
+				// 
 			}
 		}
 	}
