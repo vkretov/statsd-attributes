@@ -25,8 +25,6 @@ namespace OpenTable.Services.Statsd.Attributes.Statsd
             {
                 StatsdClient.Metrics.Counter(statName, value, sampleRate);
             }
-
-
         }
 
         public static void Timer(string statName, int value, double sampleRate = 1)

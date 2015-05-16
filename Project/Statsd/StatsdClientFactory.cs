@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Net;
+using System.Web.Http.Filters;
 using OpenTable.Services.Statsd.Attributes.Common;
 using StatsdClient;
 
@@ -13,8 +15,10 @@ namespace OpenTable.Services.Statsd.Attributes.Statsd
             string dataCenterRegion,
             string serviceType,
             int failureBackoffSecs = 60,
-            Action failureCallback = null)
+            Action failureCallback = null,
+            Func<Exception, HttpActionExecutedContext, HttpStatusCode> exceptionToStatusCode = null)
         {
+            CommonHelpers.ExceptionToStatusCode = exceptionToStatusCode;
             CommonHelpers.TrySleepRetry(
 
                 // action
@@ -37,8 +41,10 @@ namespace OpenTable.Services.Statsd.Attributes.Statsd
             string dataCenterRegion,
             string serviceType,
             int failureBackoffSecs = 60,
-            Action failureCallback = null)
+            Action failureCallback = null,
+            Func<Exception, HttpActionExecutedContext, HttpStatusCode> exceptionToStatusCode = null)
         {
+            CommonHelpers.ExceptionToStatusCode = exceptionToStatusCode;
             CommonHelpers.TrySleepRetry(
 
                 // action
