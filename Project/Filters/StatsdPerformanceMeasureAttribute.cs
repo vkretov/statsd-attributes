@@ -70,6 +70,8 @@ namespace OpenTable.Services.Statsd.Attributes.Filters
                 var otEndpoint = string.Format("{0}-{1}", actionName, apiVersion).ToLower();
                 if (actionExecutedContext.Response != null)
                 {
+                    // controller returns HttpResponseMessage or threw a HttpResponseException
+
                     statusCode = (int)actionExecutedContext.Response.StatusCode;
 
                     // Look for endpoint name in the response headers, if one exists we will use it to 
@@ -87,6 +89,8 @@ namespace OpenTable.Services.Statsd.Attributes.Filters
                 }
                 else if (actionExecutedContext.Exception != null)
                 {
+                    // controllers threw exception that is not typeof(HttpResponseException)
+
                     if (CommonHelpers.ExceptionToStatusCode != null)
                     {
                         var statusCodeEnum = CommonHelpers.ExceptionToStatusCode(actionExecutedContext.Exception,
