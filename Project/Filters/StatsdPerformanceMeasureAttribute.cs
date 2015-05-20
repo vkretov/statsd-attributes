@@ -12,8 +12,7 @@ using OpenTable.Services.Statsd.Attributes.Statsd;
 using Stopwatch = System.Diagnostics.Stopwatch;
 
 namespace OpenTable.Services.Statsd.Attributes.Filters
-{
-    [AttributeUsage(AttributeTargets.Method, Inherited = true)]
+{   
     public class StatsdPerformanceMeasureAttribute : ActionFilterAttribute
     {
         private const string StopwatchKey = "StatsdPerformanceMeasureAttribute_stopwatchKey";
