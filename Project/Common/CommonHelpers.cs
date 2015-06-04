@@ -19,6 +19,8 @@ namespace OpenTable.Services.Statsd.Attributes.Common
 
         private const int MaxUserAgentLength = 60;
 
+		private static string UserAgentRe = @"^(.+?)[\s:(/]";
+
         public static Func<Exception, HttpActionExecutedContext, HttpStatusCode> ExceptionToStatusCode { get; set; }
 
         public static void TrySleepRetry(Action action, TimeSpan sleep, Action successCallback, Action failureCallback)
@@ -77,14 +79,23 @@ namespace OpenTable.Services.Statsd.Attributes.Common
             {
                 var otReferringservice = headerValues.FirstOrDefault();
 
-                if (!string.IsNullOrEmpty(otReferringservice))
-                    return otReferringservice.Replace('.', '_');
+				if (!string.IsNullOrEmpty(otReferringservice))
+				{
+					var matchRefService = Regex.Match(
+						otReferringservice,
+						UserAgentRe,
+						RegexOptions.IgnoreCase);
+
+					return matchRefService.Success ? 
+						matchRefService.Groups[1].Value.Replace('.', '_') : 
+						otReferringservice.Replace('.', '_');
+				}
             }
 
             // fetch user agent from request headers
             var match = Regex.Match(
                 headers.UserAgent.ToString(),
-                @"^(\w+)/",
+				UserAgentRe,
                 RegexOptions.IgnoreCase);
 
             var userAgent = (match.Success) ? match.Groups[1].Value.Replace('.', '_') : null;
