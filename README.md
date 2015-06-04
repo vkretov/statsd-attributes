@@ -20,13 +20,15 @@ namespace OpenTable.Services.Statsd.Attributes.Statsd
 {
 	public class StatsdClientFactory
 	{
-		public static void MakeStatsdClient(
-			string statsdServerName, 
-			int statsdServerPort, 
-			string appEnvironment, 
-			string serviceType,
-			int failureBackoffSecs = 60, 
-			Action failureCallback = null){}
+	    public static void MakeStatsdClient(
+	        string statsdServerName,
+	        int statsdServerPort,
+	        string appEnvironment,
+	        string dataCenterRegion,
+	        string serviceType,
+	        int failureBackoffSecs = 60,
+	        Action failureCallback = null,
+	        Func<Exception, HttpActionExecutedContext, HttpStatusCode> exceptionToStatusCode = null){}
 	}
 }
 ```
@@ -41,13 +43,14 @@ protected void Application_Start()
 					"statsd-qa-sf.otenv.com",
 					8125,
 					"dev",
+					null, //// <- null in this case will cause the lib to determine the datacenter
+					      ////    from the machine name, basically using the first two chars machine name  
 					"availability-na",
 					60,
 					() => _logger.LogError("statsd initialization failed"));
 }
 ```
 *It is important that the service type follows this format, `appname-region`*  In the above example appname is **availability** and region is **na**.  Failure back off is the time in seconds to wait between StatsD client initialization in case of a failure.  Failure callback is just that, a facility to pass in an action to be executed up on Statsd client initialization, in our case we just log it.
-
 
 ###Controller Annotation
 Annotate controller method with specifying a name, in this case the method name, *Transactions*.  Second parameter *ApiVersionPattern*, is used in specifying a regular expression for the purposes of determining the version of the API.
@@ -56,6 +59,9 @@ Annotate controller method with specifying a name, in this case the method name,
 [StatsdPerformanceMeasure(SuppliedActionName = "Transactions", ApiVersionPattern = @"user/(\w+)/", DefaultApiVersion = "v1")]
 public HttpResponseMessage Transactions(){}
 ```
+
+###Calss Annotation
+
 
 #####Published Metrics
 List of some of the published metrics:
