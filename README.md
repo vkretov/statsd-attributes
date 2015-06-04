@@ -62,6 +62,9 @@ public class UserSyncController : ApiController
 }
 ```
 
+#####Published Metrics
+-  statsd.timers.userservice-na.dev.vm.vmmbpltahmazyan.http-request-in.curl.postsyncglobaluser-v0.success.post.200.mean
+
 ###Controller Annotation
 Annotate controller method with specifying a name, in this case the method name, *Transactions*.  Second parameter *ApiVersionPattern*, is used in specifying a regular expression for the purposes of determining the version of the API.
 ```C#
