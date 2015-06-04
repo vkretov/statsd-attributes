@@ -52,6 +52,16 @@ protected void Application_Start()
 ```
 *It is important that the service type follows this format, `appname-region`*  In the above example appname is **availability** and region is **na**.  Failure back off is the time in seconds to wait between StatsD client initialization in case of a failure.  Failure callback is just that, a facility to pass in an action to be executed up on Statsd client initialization, in our case we just log it.
 
+###Calss Annotation
+To get metrics reported on on all controller class methods just annotate the class. 
+```C#
+[StatsdPerformanceMeasure]
+public class UserSyncController : ApiController
+{
+   //// tons of fantastic code....
+}
+```
+
 ###Controller Annotation
 Annotate controller method with specifying a name, in this case the method name, *Transactions*.  Second parameter *ApiVersionPattern*, is used in specifying a regular expression for the purposes of determining the version of the API.
 ```C#
@@ -59,9 +69,6 @@ Annotate controller method with specifying a name, in this case the method name,
 [StatsdPerformanceMeasure(SuppliedActionName = "Transactions", ApiVersionPattern = @"user/(\w+)/", DefaultApiVersion = "v1")]
 public HttpResponseMessage Transactions(){}
 ```
-
-###Calss Annotation
-
 
 #####Published Metrics
 List of some of the published metrics:
