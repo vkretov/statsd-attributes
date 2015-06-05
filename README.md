@@ -52,7 +52,7 @@ protected void Application_Start()
 ```
 *It is important that the service type follows this format, `appname-region`*  In the above example appname is **availability** and region is **na**.  Failure back off is the time in seconds to wait between StatsD client initialization in case of a failure.  Failure callback is just that, a facility to pass in an action to be executed up on Statsd client initialization, in our case we just log it.
 
-###Calss Annotation
+###Class Annotation
 To get metrics reported on on all controller class methods just annotate the class. 
 ```C#
 [StatsdPerformanceMeasure]
