@@ -123,6 +123,59 @@ namespace OT.Services.UserService.DataAccess.ServicesAccess.RestaurantService
 }
 ```
 
+Another way to register the interceptor is by using Castle Windsor directly. This is equivalent to the class-level annotation above.
+```C#
+	container.Register(Component.For<IUserService>()
+		.ImplementedBy<UserService>()
+		.Interceptors(InterceptorReference.ForType<StatsdPerformanceMeasureInterceptor>()).Anywhere);
+```
+
+Another interceptor is StatsdPerformanceMeasureForServiceCallsInterceptor. This is meant to log external service calls made from the application. It log the service name, http method, and will attempt to capture the http status code.
+- if no exception is thrown, then it will mark the request as "success" and default the httpStatus to 200.
+- If an exception is thrown, then the exceptionToStatusCode callback will be called. When there is no exceptionToStatusCode provided, the status code will be defaulted to 500.
+
+The service name and http method are passed through StatsdMeasuredServiceCallAttribute. This attribute can be set on the class-level or on method-level, or on both. Method-level attribute will have first priority.
+
+
+```C#
+	//register the interceptor with the service.
+	container.Register(Component.For<IUserService>()
+		.ImplementedBy<UserService>()
+		.Interceptors(InterceptorReference.ForType<StatsdPerformanceMeasureForServiceCallsInterceptor>()).Anywhere);
+		
+	//UserService.cs:
+	public class UserService : IUserService
+	{
+		[StatsdMeasuredServiceCall(Name = "UserService", HttpMethod = "Get")]
+		public long GetUserGpIdByLogin(string loginName)
+		{
+			//call service
+			return _service.GetUserGpIdByLogin(loginName);
+		}
+
+		[StatsdMeasuredServiceCall(Name = "UserService", HttpMethod = "Post")]
+		public UserRegistrationDetails CreateUser(RegistrationCriteria registrationCriteria)
+		{
+			//call service
+			return _service.CreateUser(registrationCriteria);
+		}
+		
+		[StatsdMeasuredServiceCall(Name = "UserService", HttpMethod = "Patch")]
+		public void UpdateUser(long globalPersonId, UserInfoUpdate newInfo)
+		{
+			//call service
+			return _service.PatchUser(globalPersonId, newInfo);
+		}
+	}
+```
+
+List of some of the published metrics:
+- statsd.timers.mobileweb-na.pp.wi.win-devbox.service-call.userservice.getusergpidbylogin.failure.get.404.mean
+- statsd.timers.mobileweb-na.pp.wi.win-devbox.service-call.userservice.getusergpidbylogin.success.get.200.lower
+
+- statsd.timers.mobileweb-na.pp.wi.win-devbox.service-call.userservice.updateuser.success.patch.200.mean
+- statsd.timers.mobileweb-na.pp.wi.win-devbox.service-call.userservice.createuser.success.post.200.mean
+
 ###Publishing Metrics Without Annotation
 We can publish metrics for a specific block of code by enclosing the block within a using block which creates a StatsdPerformanceMeasure.  This does not require annotations on either the class or the method.
 ```C#

@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\..\mobile-web\packages\OpenTable.Services.Statsd.Attributes.1.0.37\lib\net40\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -68,6 +68,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AOP\StatsdMeasuredServiceCallAttribute.cs" />
+    <Compile Include="AOP\StatsdPerformanceMeasureForServiceCallsInterceptor.cs" />
+    <Compile Include="AOP\StatsdPerformanceMeasureInterceptorBase.cs" />
     <Compile Include="AOP\StatsdMeasuredMethodAttribute.cs" />
     <Compile Include="AOP\StatsdPerformanceMeasureInterceptor.cs" />
     <Compile Include="Common\CommonHelpers.cs" />
