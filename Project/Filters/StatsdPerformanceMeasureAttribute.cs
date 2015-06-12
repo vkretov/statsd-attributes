@@ -101,7 +101,7 @@ namespace OpenTable.Services.Statsd.Attributes.Filters
                 }
 
 
-                var status = IsSuccessStatusCode(statusCode) ? StatsdConstants.HighlevelStatus.Success : StatsdConstants.HighlevelStatus.Failure;
+                var status = CommonHelpers.GetHighlevelStatus(IsSuccessStatusCode(statusCode));
                 // not being able to read status code will result in status code being set to undefined
                 var statusCodeString = statusCode == 0
                     ? StatsdConstants.Undefined

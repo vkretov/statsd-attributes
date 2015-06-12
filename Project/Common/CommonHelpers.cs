@@ -126,12 +126,15 @@ namespace OpenTable.Services.Statsd.Attributes.Common
                 StatsdConstants.MethodCall,
                 CommonHelpers.GetReferringService(),
                 actionName,
-                exceptionThrown
-                    ? "failure"
-                    : "success",
+                GetHighlevelStatus(!exceptionThrown),
                 StatsdConstants.Undefined,
                 StatsdConstants.Undefined).ToLower();
             return metricName;
         }
+
+	    public static StatsdConstants.HighlevelStatus GetHighlevelStatus(bool isSuccessful)
+	    {
+		    return isSuccessful ? StatsdConstants.HighlevelStatus.Success : StatsdConstants.HighlevelStatus.Failure;
+	    }
     }
 }
