@@ -133,7 +133,9 @@ namespace OpenTable.Services.Statsd.Attributes.Filters
 
         private static void EnrichResponseHeaders(HttpActionExecutedContext actionExecutedContext)
         {
-            if (!actionExecutedContext.Response.Headers.Contains(StatsdConstants.OtSrviceName) &&
+            if (actionExecutedContext.Response != null &&
+                actionExecutedContext.Response.Headers != null &&
+                !actionExecutedContext.Response.Headers.Contains(StatsdConstants.OtSrviceName) &&
                 !string.IsNullOrEmpty(StatsdConstants.OtSrviceNameValue))
             {
                 actionExecutedContext.Response.Headers.Add(
