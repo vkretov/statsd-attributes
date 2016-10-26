@@ -26,6 +26,9 @@ namespace OpenTable.Services.Statsd.Attributes.AOP
 		private readonly ConcurrentDictionary<RuntimeMethodHandle, bool> _scanned =
 			new ConcurrentDictionary<RuntimeMethodHandle, bool>();
 
+		private readonly ConcurrentDictionary<RuntimeMethodHandle, ICountEmitter> _countEmitters =
+			new ConcurrentDictionary<RuntimeMethodHandle, ICountEmitter>();
+
 		private ThreadLocal<ConcurrentDictionary<RuntimeMethodHandle, Stopwatch>> _stopWatchThreadLocal;
 
 		protected StatsdPerformanceMeasureInterceptorBase()
@@ -83,12 +86,22 @@ namespace OpenTable.Services.Statsd.Attributes.AOP
 			var elapsedMilliseconds = (int)stopwatch.ElapsedMilliseconds;
 			stopwatch.Reset();
 
+			var count = 1;
+			if (_countEmitters.ContainsKey(invocation.Method.MethodHandle))
+			{
+				var countEmitter = _countEmitters[invocation.Method.MethodHandle];
+				if (countEmitter != null)
+				{
+					count = countEmitter.EmitCount(invocation);
+				}
+			}
+
 			var actionName = invocation.Method.Name.ToLower();
 
 			var metricName = GetMetricName(invocation,actionName, exception);
 
 			StatsdClientWrapper.Timer(metricName, elapsedMilliseconds);
-			StatsdClientWrapper.Counter(metricName);
+			StatsdClientWrapper.Counter(metricName, count);
 		}
 
 		private bool CanIntercept(IInvocation invocation)
@@ -112,9 +125,24 @@ namespace OpenTable.Services.Statsd.Attributes.AOP
 					return true;
 				}
 
-				if (invocation.MethodInvocationTarget.GetCustomAttributes(typeof (StatsdMeasuredMethodAttribute), false).Any())
+				var statsdMeasuredMethodAttribute
+					= invocation.MethodInvocationTarget
+								.GetCustomAttributes(typeof (StatsdMeasuredMethodAttribute), false)
+								.OfType<StatsdMeasuredMethodAttribute>()
+								.FirstOrDefault();
+				if (statsdMeasuredMethodAttribute != null)
 				{
 					_scanned[invocation.Method.MethodHandle] = true;
+					if (statsdMeasuredMethodAttribute.CountEmitter != null)
+					{
+						// counting class should be a type that implements ICountingClass;
+						// capture an instance once for later use
+						var obj = Activator.CreateInstance(statsdMeasuredMethodAttribute.CountEmitter) as ICountEmitter;
+						if (obj != null)
+						{
+							_countEmitters[invocation.Method.MethodHandle] = obj;
+						}
+					}
 					return true;
 				}
 

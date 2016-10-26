@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace OpenTable.Services.Statsd.Attributes.AOP
 {
@@ -9,5 +6,6 @@ namespace OpenTable.Services.Statsd.Attributes.AOP
 	public class StatsdMeasuredMethodAttribute : Attribute
 	{
 		public string Name { get; set; }
+		public Type CountEmitter { get; set; }
 	}
 }
