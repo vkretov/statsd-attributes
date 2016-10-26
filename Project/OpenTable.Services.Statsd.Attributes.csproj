@@ -68,6 +68,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AOP\ICountEmitter.cs" />
     <Compile Include="AOP\StatsdMeasuredServiceCallAttribute.cs" />
     <Compile Include="AOP\StatsdPerformanceMeasureForServiceCallsInterceptor.cs" />
     <Compile Include="AOP\StatsdPerformanceMeasureInterceptorBase.cs" />
