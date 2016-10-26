@@ -135,7 +135,7 @@ namespace OpenTable.Services.Statsd.Attributes.AOP
 					_scanned[invocation.Method.MethodHandle] = true;
 					if (statsdMeasuredMethodAttribute.CountEmitter != null)
 					{
-						// counting class should be a type that implements ICountingClass;
+						// counting class should be a type that implements ICountEmitter;
 						// capture an instance once for later use
 						var obj = Activator.CreateInstance(statsdMeasuredMethodAttribute.CountEmitter) as ICountEmitter;
 						if (obj != null)
