@@ -3,10 +3,10 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Net;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using Castle.DynamicProxy;
 using OpenTable.Services.Statsd.Attributes.Statsd;
 
@@ -58,8 +58,23 @@ namespace OpenTable.Services.Statsd.Attributes.AOP
 			}
 			finally
 			{
-				StopTimerAndReport(invocation, exception);
+				var stopwatch = _stopWatchThreadLocal.Value[invocation.Method.MethodHandle];
+				if (IsTask(invocation))
+				{
+					((Task) invocation.ReturnValue).ContinueWith((task) => StopTimerAndReport(invocation, stopwatch, task.Exception));
+				}
+				else
+				{
+					StopTimerAndReport(invocation, stopwatch, exception);
+				}
 			}
+		}
+
+		private bool IsTask(IInvocation invocation)
+		{
+			return (invocation.MethodInvocationTarget.ReturnType.IsGenericType &&
+			        invocation.MethodInvocationTarget.ReturnType.GetGenericTypeDefinition() == typeof(Task<>)) ||
+			       invocation.MethodInvocationTarget.ReturnType == typeof(Task);
 		}
 
 		private void StartTimer(IInvocation invocation)
@@ -74,14 +89,12 @@ namespace OpenTable.Services.Statsd.Attributes.AOP
 			_stopWatchThreadLocal.Value[invocation.Method.MethodHandle] = stopwatch;
 		}
 
-		private void StopTimerAndReport(IInvocation invocation, Exception exception = null)
+		private void StopTimerAndReport(IInvocation invocation, Stopwatch stopwatch, Exception exception = null)
 		{
 			if (!StatsdClientWrapper.IsEnabled)
 			{
 				return;
 			}
-
-			var stopwatch = _stopWatchThreadLocal.Value[invocation.Method.MethodHandle];
 
 			var elapsedMilliseconds = (int)stopwatch.ElapsedMilliseconds;
 			stopwatch.Reset();
